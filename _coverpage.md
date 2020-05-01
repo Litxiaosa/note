@@ -3,7 +3,6 @@
 </p>
 <h1 align="center">笔记</h1>
 
-
 [GitHub](https://github.com/Litxiaosa/note)
-[开始阅读](#note)
+       [开始阅读](#note)
 
