@@ -1,7 +1,6 @@
-#### **Git**
+### **Git**
 
 ```shell
-
 git init 初始化git
 
 git branch 查看分支

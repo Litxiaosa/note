@@ -4,8 +4,6 @@
 
 ​	`make`
 
-
-
 2: 进入到配置文件: redis.conf,（主从服务器都改）
 
 ​	<img src="https://gitee.com/gean_807/typora/raw/typora/uPic/image-20200804154723167.png" alt="image-20200804154723167" style="zoom:50%;" />

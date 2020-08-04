@@ -4,5 +4,5 @@
 <h1 align="center">个人笔记</h1>
 
 [GitHub](https://github.com/Litxiaosa/note)
-       [开始阅读](#note)
+[开始阅读](./docs/Mysql问题.md)
 

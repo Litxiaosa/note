@@ -1,4 +1,4 @@
-#### **Mysql 5.7 问题**
+### **Mysql 5.7 问题**
 
 ```shell
 安装
@@ -30,7 +30,3 @@ flush privileges;
 如果远程报连不上，可能是防火墙的问题
 sudo firewall-cmd --zone=public --permanent --add-service=mysql sudo systemctl restart firewalld
 ```
-
-
-
-`

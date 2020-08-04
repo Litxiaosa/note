@@ -47,4 +47,3 @@ start slave;
 #查看Slave服务器
 show slave status \G
 ```
-

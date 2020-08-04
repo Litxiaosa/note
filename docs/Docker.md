@@ -1,10 +1,6 @@
-
-
-
-
 ### **Docker**
 
-#### **1: 安装 docker**
+####  **1: 安装docker**
 
 ```shell
 #卸载旧的 docker
