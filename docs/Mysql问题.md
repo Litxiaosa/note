@@ -1,5 +1,3 @@
-### **Mysql 5.7 问题**
-
 ```shell
 安装
 sudo yum install mysql-community-server

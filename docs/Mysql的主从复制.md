@@ -1,5 +1,3 @@
-#### **Mysql的主从复制**
-
 ```shell
 # Master服务器：
 

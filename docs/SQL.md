@@ -1,5 +1,3 @@
-### **SQL**
-
 ```mysql
 # sql 四舍五入,达到保留两位小数位的目的：
     select cast(13.145 as   decimal(10,   2))
