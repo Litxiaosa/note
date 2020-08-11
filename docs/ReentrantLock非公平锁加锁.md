@@ -500,26 +500,26 @@ public static void park(Object blocker) {
 
 
 
-到这里在正常的情况下(没有异常的情况下)整个上锁流程算是走完了。 
+到这里在正常的情况下(没有异常的情况下)整个上锁流程算是走完了。
 
 
 
 **稍微总结一下**：从lock.lock()开始:
 
->  1：通过cas操作获取锁若成功，方法执行结束，否则进入第2步
-
-> 2:  若state == 0 尝试获取锁，成功则方法结束，否则进入第3步，
-
-> 若（state != 0 && 当先线程 == 获取锁的线程） 则 state++ 方法结 束，否则进入第3步
-
-> 3:  将线程包装成一个node 进入到等待队列
-
-> 4:  若 前置节点 == head && tryAcquire(1) == true 方法结束 返回中断状态，否则进入第5步。
-
-> 5:  若pred.waitStatue = -1 , 则返回true, 进入park阻塞状态。
-
-> 若pred.waitStatue = 1 ,剔除pred，并且向前找到，并且将自己连接到一个非取消的线程节点上 ，返回false，
-
-> 若pred.waitStatue = 0 or pred.waitStatue = -2，则将pred.waitStatue 置为 -1 ，返回false. 
-
-> 第五步执行完毕后返回第四步。
+> 1：通过cas操作获取锁若成功，方法执行结束，否则进入第2步
+>
+> 2:  若state == 0 尝试获取锁，成功则方法结束，否则进入第3步， 
+>
+> ​     若（state != 0 && 当先线程 == 获取锁的线程） 则 state++ 方法结 束，否则进入第3步     
+>
+>  3:  将线程包装成一个node 进入到等待队列
+>
+>  4:  若 前置节点 == head && tryAcquire(1) == true 方法结束 返回中断状态，否则进入第5步。
+>
+>  5:  若pred.waitStatue = -1 , 则返回true, 进入park阻塞状态。 
+>
+> ​      若pred.waitStatue = 1 ,剔除pred，并且向前找到，并且将自己连接到一个非取消的线程节点上 ，返回false，
+>
+> ​      若pred.waitStatue = 0 or pred.waitStatue = -2，则将pred.waitStatue 置为 -1 ，返回false. 
+>
+> ​      第五步执行完毕后返回第四步。
