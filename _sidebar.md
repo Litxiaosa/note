@@ -14,6 +14,10 @@
 
 * [ZK分布式锁](./docs/ZK分布式锁.md)
 
+* [ReentrantLock非公平锁加锁](./docs/ReentrantLock非公平锁加锁.md)
+
+* [ReentrantLock的解锁](./docs/ReentrantLock的解锁.md)
+
   
 
 
