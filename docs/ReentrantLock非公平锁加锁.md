@@ -28,9 +28,9 @@ public abstract class AbstractQueuedSynchronizer
          */
         volatile Node next;
 
-    		/**
-    		 * 节点所代表的线程
-     		 */
+				/**
+				 * 节点所代表的线程
+				 */
         volatile Thread thread;
     }
   
@@ -83,9 +83,9 @@ final void lock() {
      * 这里compareAndSetState方法里面调用的是unsafe的compareAndSwapInt方法。
      */
    if (compareAndSetState(0, 1))sdsd
-		 /*
-		  * 若修改成功 这将持有锁的线程 置为当前线程
-		  */
+		 /**
+			* 若修改成功 这将持有锁的线程 置为当前线程
+			*/
      setExclusiveOwnerThread(Thread.currentThread());
    else
      /**
