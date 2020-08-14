@@ -14,7 +14,7 @@
 
 ​	<img src="https://gitee.com/gean_807/typora/raw/typora/uPic/image-20200804155143549.png" alt="image-20200804155143549" style="zoom:50%;" />
 
- daemonize yes  守护进程改称yes
+ daemonize yes   改为yes  （yes 的意思是后台方式启动 ）
 
 
 
