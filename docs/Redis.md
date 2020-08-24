@@ -780,10 +780,9 @@ cluster nodes
 ```
 
 
-
 ​	**哨兵模式下：**
 
-       ``` java
+``` java
 public class TestLock {
 
     public static void main(String[] args) {
@@ -812,7 +811,7 @@ public class TestLock {
         }
     }
 }      
-       ```
+```
 
 
 
