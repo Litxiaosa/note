@@ -752,17 +752,97 @@ cluster nodes
 - 客户端 1 从`master` 获得了锁
 - `master`宕机了，但是储存锁的`key`还没有来得及同步到`slave`
 - `slave`升级为了`master`
-- 客户端2从新的`master`获取到了对应同一个资源的锁
+- 导致锁丢失
 
 所以，作者提出了**RedLock算法**, 步骤大概是这样，假设我们有 N 个`master`节点。
 
 - 获取当前时间 (毫秒)
-- 轮流用相同的 `key` 和随机值在N个节点上请求锁，在这一步里，客户端在每个`master`上请求锁时，会有一个和总的锁释放时间相比小的多的超时时间。比如如果锁自动释放时间是10秒钟，那每个节点锁请求的超时时间可能是5-50毫秒的范围，这个可以防止一个客户端在某个宕掉的`master`节点上阻塞过长时间，如果一个`master`节点不可用了，我们应该尽快尝试下一个`master`节点。
+- 轮流用相同的 `key` 和具有唯一性的`value`在N个节点上请求锁，在这一步里，客户端在每个`master`上请求锁时，客户端应该设置一个网络连接和响应超时时间, 这个超时时间应该小于锁的失效时间。比如如果锁自动释放时间是10秒钟，那每个节点锁请求的超时时间可能是5-50毫秒的范围，这个可以防止一个客户端在某个宕掉的`master`节点上阻塞过长时间，如果一个`master`节点不可用了，我们应该尽快尝试下一个`master`节点。
 - 客户端计算第二步中获取锁所花的时间，只有当客户端在大多数`master`节点上成功获取了锁（N/2+1），而且总共消耗的时间不超过锁释放时间，这个锁就认为是获取成功了。
 - 如果锁获取成功了，那现在锁自动释放时间就是最初的锁释放时间减去之前获取锁所消耗的时间。
 - 如果锁获取失败了，不管是因为获取成功的锁不超过一半（N/2+1)还是因为总消耗时间超过了锁释放时间，客户端都会到每个`master`节点上释放锁，即便是那些他认为没有获取成功的锁。
 
-但是，**RedLock算法**其实并不安全，锁超时失效的时间也不好设置，而且**RedLock算法**并没有解决锁超时失效问题。
+`Redisson` 做了`RedLock`算法的分布式锁封装，首先看下大佬的总结图：
+
+<img src="https://gitee.com/gean_807/typora/raw/typora/uPic/image-20200824142013358.png" alt="image-20200824142013358" style="zoom:70%;" />
+
+​    
+
+​	**哨兵模式下：**
+
+       ``` java
+public class TestLock {
+
+    public static void main(String[] args) {
+        Config config = new Config();
+        config.useSentinelServers().addSentinelAddress(
+                "redis://172.29.3.245:26378","redis://172.29.3.245:26379", "redis://172.29.3.245:26380")
+                .setMasterName("mymaster")
+                .setPassword("a123456").setDatabase(0);
+
+        // 构造RedissonClient
+        RedissonClient redissonClient = Redisson.create(config);
+        // 设置锁定资源名称
+        RLock disLock = redissonClient.getLock("DISLOCK");
+        boolean isLock;
+        try {
+            //尝试获取分布式锁
+            isLock = disLock.tryLock(500, 15000, TimeUnit.MILLISECONDS);
+            if (isLock) {
+                //TODO if get lock success, do something;
+                Thread.sleep(15000);
+            }
+        } catch (Exception e) {
+        } finally {
+            // 无论如何, 最后都要解锁
+            disLock.unlock();
+        }
+    }
+}      
+       ```
+
+
+
+**Redis  cluster 模式下：**
+
+``` java
+public class TestLock {
+
+    public static void main(String[] args) {
+        Config config = new Config();
+        config.useClusterServers().addNodeAddress(
+                "redis://172.29.3.245:6375","redis://172.29.3.245:6376", "redis://172.29.3.245:6377",
+                "redis://172.29.3.245:6378","redis://172.29.3.245:6379", "redis://172.29.3.245:6380")
+                .setPassword("a123456").setScanInterval(5000);
+
+        // 构造RedissonClient
+        RedissonClient redissonClient = Redisson.create(config);
+        // 设置锁定资源名称
+        RLock disLock = redissonClient.getLock("DISLOCK");
+        boolean isLock;
+        try {
+            //尝试获取分布式锁
+            isLock = disLock.tryLock(500, 15000, TimeUnit.MILLISECONDS);
+            if (isLock) {
+                //TODO if get lock success, do something;
+                Thread.sleep(15000);
+            }
+        } catch (Exception e) {
+        } finally {
+            // 无论如何, 最后都要解锁
+            disLock.unlock();
+        }
+    }
+}
+```
+
+
+
+通过代码可知，经过`Redisson`的封装，实现Redis`分布式锁非常方便`， 那么实现分布式锁的一个非常重要的点就是`set`的`value`要具有唯一性，`Redisson`的`value`是怎样保证`value`的唯一性呢？ 答案是 `UUID` 和当前线程`ID`	
+
+入口在 `redissonClient.getLock("REDLOCK_KEY")`
+
+![image-20200824144217443](/Users/xiaosa/Library/Application Support/typora-user-images/image-20200824144217443.png)
 
 
 
