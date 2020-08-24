@@ -766,7 +766,20 @@ cluster nodes
 
 <img src="https://gitee.com/gean_807/typora/raw/typora/uPic/image-20200824142013358.png" alt="image-20200824142013358" style="zoom:70%;" />
 
-​    
+​	
+
+​		项目中引入`Redisson`依赖    
+
+``` xml
+<!-- https://mvnrepository.com/artifact/org.redisson/redisson -->
+<dependency>
+	<groupId>org.redisson</groupId>
+	<artifactId>redisson</artifactId>
+	<version>3.13.3</version>
+</dependency>
+```
+
+
 
 ​	**哨兵模式下：**
 
